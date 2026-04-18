@@ -217,16 +217,3 @@ dotnet run --urls "https://localhost:5002"
 
 ---
 
-## 📝 License
-
-This project is licensed under the **MIT License** — feel free to use, modify and distribute it.
-
----
-
-<div align="center">
-
-Made with ❤️ using **ASP.NET Core 8** · **Entity Framework Core** · **SQLite**
-
-⭐ If you found this useful, give it a star!
-
-</div>
