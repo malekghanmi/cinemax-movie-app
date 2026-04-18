@@ -1,0 +1,168 @@
+@model IEnumerable<AppMovie.Models.Movie>
+@{
+    ViewData["Title"] = "Catalogue";
+    var genres = ViewBag.Genres as List<string> ?? new List<string>();
+    var years = ViewBag.Years as List<int> ?? new List<int>();
+    var currentFilter = ViewData["CurrentFilter"]?.ToString();
+    var currentGenre = ViewData["CurrentGenre"]?.ToString();
+    var currentYear = ViewData["CurrentYear"] as int?;
+    var count = Model.Count();
+}
+
+<!-- Search & Filter -->
+<div class="search-section" style="padding-top: 90px;">
+    <div class="search-container">
+        <form asp-action="Index" method="get">
+            <div class="search-row">
+                <div class="search-field" style="flex:2">
+                    <label>Rechercher</label>
+                    <div class="search-input-wrap">
+                        <input type="text" name="searchString" class="form-control" 
+                               placeholder="Titre, réalisateur, acteur, synopsis..."
+                               value="@currentFilter" />
+                    </div>
+                </div>
+                <div class="search-field">
+                    <label>Genre</label>
+                    <select name="genre" class="form-select">
+                        <option value="">Tous les genres</option>
+                        @foreach (var g in genres)
+                        {
+                            <option value="@g" selected="@(g == currentGenre)">@g</option>
+                        }
+                    </select>
+                </div>
+                <div class="search-field" style="max-width:160px">
+                    <label>Année</label>
+                    <select name="year" class="form-select">
+                        <option value="">Toutes</option>
+                        @foreach (var y in years)
+                        {
+                            <option value="@y" selected="@(y == currentYear)">@y</option>
+                        }
+                    </select>
+                </div>
+                <div class="search-field" style="max-width:140px">
+                    <label>Trier par</label>
+                    <select name="sortOrder" class="form-select">
+                        <option value="">Récents</option>
+                        <option value="rating_desc">Meilleures notes</option>
+                        <option value="title">Titre A→Z</option>
+                        <option value="title_desc">Titre Z→A</option>
+                        <option value="date_desc">Date récente</option>
+                        <option value="date">Date ancienne</option>
+                    </select>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-end">
+                    <button type="submit" class="btn-search"> Chercher</button>
+                    <a asp-action="Index" class="btn-reset">✕</a>
+                </div>
+            </div>
+
+            @if (genres.Any())
+            {
+                <div class="filter-pills">
+                    <a href="@Url.Action("Index")" class="pill @(string.IsNullOrEmpty(currentGenre) ? "active" : "")">Tous</a>
+                    @foreach (var g in genres)
+                    {
+                        <a href="@Url.Action("Index", new { genre = g, searchString = currentFilter })" 
+                           class="pill @(g == currentGenre ? "active" : "")">@g</a>
+                    }
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+<!-- Results Header -->
+<div class="section" style="padding-bottom: 0;">
+    <div class="section-header">
+        <h2 class="section-title">
+            @if (!string.IsNullOrEmpty(currentFilter) || !string.IsNullOrEmpty(currentGenre) || currentYear.HasValue)
+            {
+                <span>Résultats</span>
+            }
+            else
+            {
+                <span>Tous les films</span>
+            }
+        </h2>
+        <div style="display:flex; align-items:center; gap:20px;">
+            <span style="color: var(--text-muted); font-size: 0.85rem;" id="movieCount" data-total="@count">
+                <span style="color:var(--accent-red);font-weight:700;">@count</span> film@(count > 1 ? "s" : "")
+            </span>
+            <a asp-action="Create" class="btn-primary" style="padding: 10px 24px; font-size: 0.85rem;">+ Ajouter</a>
+        </div>
+    </div>
+</div>
+
+<!-- Movie Grid -->
+<div class="section" style="padding-top: 24px;">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h3 class="empty-title">Aucun film trouvé</h3>
+            <p class="empty-sub">Essayez d'autres termes ou <a asp-action="Create" style="color:var(--accent-red)">ajoutez un film</a></p>
+        </div>
+    }
+    else
+    {
+        <div class="movies-grid">
+            @foreach (var movie in Model)
+            {
+                <div class="movie-card">
+                    <!-- Genre Badge -->
+                    @if (!string.IsNullOrEmpty(movie.Genre))
+                    {
+                        <div class="card-genre-badge">@movie.Genre</div>
+                    }
+
+                    <!-- Rating Badge -->
+                    @if (movie.Rating.HasValue)
+                    {
+                        <div class="card-rating-badge">⭐ @movie.Rating.Value.ToString("F1")</div>
+                    }
+
+                    <!-- Poster -->
+                    <div class="card-poster">
+                        @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                        {
+                            <img src="@movie.PosterUrl" alt="@movie.Title" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'card-poster-placeholder\'><span>🎬</span><span class=\'movie-title-placeholder\'>@movie.Title.Replace("'","\\'")</span></div>'" />
+                        }
+                        else
+                        {
+                            <div class="card-poster-placeholder">
+                                <span class="movie-title-placeholder">@movie.Title</span>
+                            </div>
+                        }
+
+                        <!-- Hover overlay -->
+                        <div class="card-overlay">
+                            <div class="overlay-actions">
+                                <a asp-action="Details" asp-route-id="@movie.Id" class="overlay-btn overlay-btn-play">▶ Détails</a>
+                                <a asp-action="Edit" asp-route-id="@movie.Id" class="overlay-btn overlay-btn-info">✏</a>
+                            </div>
+                            <div class="overlay-title">@movie.Title</div>
+                            <div class="overlay-meta">
+                                <span>@movie.ReleaseDate.Year</span>
+                                @if (movie.Duration.HasValue)
+                                {
+                                    <span>@movie.Duration min</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Info -->
+                    <div class="card-info">
+                        <div class="card-title">@movie.Title</div>
+                        <div class="card-meta">
+                            <span class="card-year">@movie.ReleaseDate.Year</span>
+                            <span class="card-price">@movie.Price.ToString("F2") €</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

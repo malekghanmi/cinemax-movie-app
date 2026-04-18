@@ -1,0 +1,123 @@
+@model AppMovie.Models.Movie
+@{
+    ViewData["Title"] = "Ajouter un film";
+    var genres = ViewBag.Genres as List<string> ?? new List<string>();
+}
+
+<div class="form-page">
+    <div class="form-container">
+        <div class="form-header">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <a asp-action="Index" style="color:var(--text-muted);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:6px;">← Retour au catalogue</a>
+            </div>
+            <h1 class="form-page-title">AJOUTER UN FILM</h1>
+            <p class="form-page-subtitle">Enrichissez votre bibliothèque cinéma</p>
+        </div>
+
+        <div class="form-card">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" style="color:#ff4757;margin-bottom:20px;"></div>
+
+                <!-- Titre -->
+                <div class="form-group">
+                    <label class="form-label" asp-for="Title">Titre du film *</label>
+                    <input asp-for="Title" class="form-control-custom" placeholder="Ex: Inception" />
+                    <span asp-validation-for="Title" class="validation-msg">⚠</span>
+                </div>
+
+                <!-- Row: Genre + Date -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Genre">Genre</label>
+                        <select asp-for="Genre" class="form-control-custom" style="appearance:auto">
+                            <option value="">-- Choisir --</option>
+                            @foreach (var g in genres)
+                            {
+                                <option value="@g">@g</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="ReleaseDate">Date de sortie</label>
+                        <input asp-for="ReleaseDate" type="date" class="form-control-custom" />
+                    </div>
+                </div>
+
+                <!-- Row: Price + Rating -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Price">Prix (€)</label>
+                        <input asp-for="Price" type="number" step="0.01" class="form-control-custom" placeholder="9.99" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Rating">Note (0-10)</label>
+                        <input asp-for="Rating" type="number" step="0.1" min="0" max="10" class="form-control-custom" placeholder="8.5" />
+                    </div>
+                </div>
+
+                <!-- Row: Director + Duration -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Director">Réalisateur</label>
+                        <input asp-for="Director" class="form-control-custom" placeholder="Ex: Christopher Nolan" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Duration">Durée (min)</label>
+                        <input asp-for="Duration" type="number" class="form-control-custom" placeholder="120" />
+                    </div>
+                </div>
+
+                <!-- Cast -->
+                <div class="form-group">
+                    <label class="form-label" asp-for="Cast">Casting</label>
+                    <input asp-for="Cast" class="form-control-custom" placeholder="Ex: Leonardo DiCaprio, Joseph Gordon-Levitt..." />
+                </div>
+
+                <!-- Language -->
+                <div class="form-group">
+                    <label class="form-label" asp-for="Language">Langue</label>
+                    <input asp-for="Language" class="form-control-custom" placeholder="Français" />
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label" asp-for="Description">Synopsis</label>
+                    <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="Décrivez le film..."></textarea>
+                </div>
+
+                <!-- Poster -->
+                <div class="form-group">
+                    <label class="form-label">Affiche du film</label>
+                    <input asp-for="PosterUrl" id="PosterUrl" class="form-control-custom" placeholder="https://image.tmdb.org/t/p/w500/..." style="margin-bottom:12px;" />
+                    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+                        <span style="color:var(--text-muted);font-size:0.8rem;">ou</span>
+                        <label style="background:var(--bg-deep);border:1px solid var(--border-subtle);border-radius:8px;padding:10px 20px;cursor:pointer;font-size:0.85rem;color:var(--text-secondary);transition:all 0.2s;" 
+                               onmouseenter="this.style.borderColor='rgba(229,9,20,0.4)'" onmouseleave="this.style.borderColor='var(--border-subtle)'">
+                            📁 Choisir un fichier
+                            <input type="file" id="posterFile" name="posterFile" accept="image/*" style="display:none;" />
+                        </label>
+                    </div>
+                    <img class="poster-preview" id="posterPreview" alt="Aperçu" />
+                </div>
+
+                <!-- Trailer -->
+                <div class="form-group">
+                    <label class="form-label" asp-for="TrailerUrl">URL Bande-annonce (YouTube)</label>
+                    <input asp-for="TrailerUrl" class="form-control-custom" placeholder="https://www.youtube.com/watch?v=..." />
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-form-submit">
+                        <span>🎬</span> Ajouter au catalogue
+                    </button>
+                    <a asp-action="Index" class="btn-form-cancel">← Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

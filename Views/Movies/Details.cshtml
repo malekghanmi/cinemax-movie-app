@@ -1,0 +1,184 @@
+@model AppMovie.Models.Movie
+@{
+    ViewData["Title"] = Model.Title;
+    var related = ViewBag.Related as List<AppMovie.Models.Movie> ?? new List<AppMovie.Models.Movie>();
+    
+    string GetStars(double? r) {
+        if (!r.HasValue) return "";
+        int full = (int)Math.Round(r.Value / 2);
+        return string.Concat(Enumerable.Repeat("★", full)) + string.Concat(Enumerable.Repeat("☆", 5 - full));
+    }
+    
+    string? embedUrl = null;
+    if (!string.IsNullOrEmpty(Model.TrailerUrl)) {
+        var url = Model.TrailerUrl;
+        if (url.Contains("watch?v=")) embedUrl = url.Replace("watch?v=", "embed/");
+        else if (url.Contains("youtu.be/")) embedUrl = "https://www.youtube.com/embed/" + url.Split('/').Last();
+        else if (url.Contains("embed/")) embedUrl = url;
+    }
+}
+
+<!-- Detail Hero -->
+<div class="detail-hero">
+    <!-- Backdrop -->
+    <div class="detail-backdrop">
+        @if (!string.IsNullOrEmpty(Model.PosterUrl))
+        {
+            <img src="@Model.PosterUrl" alt="" />
+        }
+    </div>
+
+    <div class="detail-content">
+        <!-- Poster 3D -->
+        <div class="detail-poster">
+            @if (!string.IsNullOrEmpty(Model.PosterUrl))
+            {
+                <img src="@Model.PosterUrl" alt="@Model.Title" />
+            }
+            else
+            {
+                <div style="aspect-ratio:2/3;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:5rem;">🎬</div>
+            }
+        </div>
+
+        <!-- Info -->
+        <div class="detail-info">
+            <!-- Badges -->
+            <div class="detail-badges">
+                @if (!string.IsNullOrEmpty(Model.Genre))
+                {
+                    <span class="badge badge-genre">@Model.Genre</span>
+                }
+                <span class="badge badge-year">@Model.ReleaseDate.Year</span>
+                @if (!string.IsNullOrEmpty(Model.Language))
+                {
+                    <span class="badge badge-lang">@Model.Language</span>
+                }
+                @if (Model.Duration.HasValue)
+                {
+                    <span class="badge" style="background:rgba(255,255,255,0.08);color:var(--text-secondary);border:1px solid var(--border-subtle)">
+                        ⏱ @Model.Duration min
+                    </span>
+                }
+            </div>
+
+            <!-- Title -->
+            <h1 class="detail-title">@Model.Title</h1>
+
+            <!-- Rating -->
+            @if (Model.Rating.HasValue)
+            {
+                <div class="detail-rating-row">
+                    <div class="rating-score">
+                        <span class="rating-stars">@GetStars(Model.Rating)</span>
+                        <span>@Model.Rating.Value.ToString("F1")/10</span>
+                    </div>
+                    <span style="color:var(--text-muted);font-size:0.85rem;">Note IMDB</span>
+                </div>
+            }
+
+            <!-- Director -->
+            @if (!string.IsNullOrEmpty(Model.Director))
+            {
+                <p class="detail-director">Réalisé par <span>@Model.Director</span></p>
+            }
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="detail-description">@Model.Description</p>
+            }
+
+            <!-- Actions -->
+            <div class="detail-actions">
+                @if (!string.IsNullOrEmpty(embedUrl))
+                {
+                    <a href="#trailer" class="btn-primary">▶ Voir la bande-annonce</a>
+                }
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-secondary">✏ Modifier</a>
+                <a asp-action="Index" class="btn-secondary">← Retour</a>
+            </div>
+
+            <!-- Meta Grid -->
+            <div class="detail-meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">Date de sortie</div>
+                    <div class="meta-value">@Model.ReleaseDate.ToString("dd MMM yyyy")</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Prix</div>
+                    <div class="meta-value" style="color:var(--accent-gold)">@Model.Price.ToString("F2") €</div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Cast))
+                {
+                    <div class="meta-item" style="grid-column: 1/-1">
+                        <div class="meta-label">Casting</div>
+                        <div class="meta-value" style="font-size:0.85rem;font-weight:400;color:var(--text-secondary)">@Model.Cast</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trailer + Related -->
+<div class="detail-sections">
+    @if (!string.IsNullOrEmpty(embedUrl))
+    {
+        <div id="trailer" style="margin-bottom: 60px;">
+            <div class="section-header">
+                <h2 class="section-title">Bande-annonce</h2>
+            </div>
+            <div class="trailer-container">
+                <iframe src="@embedUrl" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+            </div>
+        </div>
+    }
+
+    @if (related.Any())
+    {
+        <div>
+            <div class="section-header">
+                <h2 class="section-title">Films similaires</h2>
+                <a asp-action="Index" asp-route-genre="@Model.Genre" class="section-link">Voir tout →</a>
+            </div>
+            <div class="related-grid">
+                @foreach (var r in related)
+                {
+                    <div class="movie-card">
+                        @if (r.Rating.HasValue)
+                        {
+                            <div class="card-rating-badge">⭐ @r.Rating.Value.ToString("F1")</div>
+                        }
+                        <div class="card-poster">
+                            @if (!string.IsNullOrEmpty(r.PosterUrl))
+                            {
+                                <img src="@r.PosterUrl" alt="@r.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="card-poster-placeholder"><span>🎬</span></div>
+                            }
+                            <div class="card-overlay">
+                                <div class="overlay-actions">
+                                    <a asp-action="Details" asp-route-id="@r.Id" class="overlay-btn overlay-btn-play">Détails</a>
+                                </div>
+                                <div class="overlay-title">@r.Title</div>
+                            </div>
+                        </div>
+                        <div class="card-info">
+                            <div class="card-title">@r.Title</div>
+                            <div class="card-meta"><span class="card-year">@r.ReleaseDate.Year</span></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Admin Actions -->
+    <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-subtle); display:flex; gap:16px;">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-secondary">✏ Modifier ce film</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" style="color:#ff4757;text-decoration:none;border:1px solid rgba(255,71,87,0.3);border-radius:10px;padding:14px 24px;font-size:0.9rem;transition:all 0.3s;" onmouseenter="this.style.background='rgba(255,71,87,0.1)'" onmouseleave="this.style.background=''">🗑 Supprimer</a>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — CINEMAX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="~/css/cinemax.css" asp-append-version="true" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🎬</text></svg>">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a class="nav-brand" asp-controller="Home" asp-action="Index">CINEMAX</a>
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">Accueil</a></li>
+            <li><a asp-controller="Movies" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Movies" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">Catalogue</a></li>
+            <li><a asp-controller="Movies" asp-action="Create" class="btn-add-nav">+ Ajouter</a></li>
+        </ul>
+    </nav>
+
+    <!-- Toast Notification -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container">
+            <div class="toast toast-success">
+                <span class="toast-icon">✅</span>
+                <span>@TempData["Success"]</span>
+            </div>
+        </div>
+    }
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        <span class="footer-brand">CINEMAX</span>
+        <span>© @DateTime.Now.Year · Votre bibliothèque cinéma personnelle</span>
+        <span>Développé avec ASP.NET Core MVC</span>
+    </footer>
+
+    <script src="~/js/cinemax.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

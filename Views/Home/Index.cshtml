@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="particles"></div>
+
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Streaming Premium
+        </div>
+        <h1 class="hero-title">
+            VOTRE<br>
+            <span class="line-red">CINÉMA</span><br>
+            PERSONNEL
+        </h1>
+        <p class="hero-subtitle">
+            Découvrez, gérez et explorez votre collection de films. Une expérience cinématographique immersive, redessinée.
+        </p>
+        <div class="hero-actions">
+            <a asp-controller="Movies" asp-action="Index" class="btn-primary">
+                <span></span> Explorer le catalogue
+            </a>
+            <a asp-controller="Movies" asp-action="Create" class="btn-secondary">
+                <span>＋</span> Ajouter un film
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-item">
+            <div class="stat-number" data-target="1000" data-suffix="+">0</div>
+            <div class="stat-label">Films</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="16" data-suffix="">0</div>
+            <div class="stat-label">Genres</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="4" data-suffix="K">0</div>
+            <div class="stat-label">Résolution</div>
+        </div>
+    </div>
+
+    <div class="scroll-indicator">Défiler</div>
+</section>
+
+<!-- Feature Section -->
+<section class="section" style="padding-top: 100px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+        <div class="fade-in" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px; transition: transform 0.3s, box-shadow 0.3s;" onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 30px 60px rgba(0,0,0,0.5)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🎭</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 10px;">Collection Complète</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">Gérez votre bibliothèque avec tous les détails : affiche, synopsis, casting, notes et plus.</p>
+        </div>
+        <div class="fade-in" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px; transition: transform 0.3s, box-shadow 0.3s;" onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 30px 60px rgba(0,0,0,0.5)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🔍</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 10px;">Recherche Avancée</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">Trouvez n'importe quel film par titre, genre, année, réalisateur ou casting en un instant.</p>
+        </div>
+        <div class="fade-in" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px; transition: transform 0.3s, box-shadow 0.3s;" onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 30px 60px rgba(0,0,0,0.5)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🎬</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 10px;">Bandes-Annonces</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">Intégrez les trailers YouTube directement dans chaque page de détail de film.</p>
+        </div>
+        <div class="fade-in" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px; transition: transform 0.3s, box-shadow 0.3s;" onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 30px 60px rgba(0,0,0,0.5)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">⭐</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 10px;">Système de Notes</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">Notez chaque film et triez votre catalogue par score pour retrouver les meilleurs.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="text-align: center; padding: 60px;">
+    <a asp-controller="Movies" asp-action="Index" class="btn-primary" style="display: inline-flex; font-size: 1.1rem; padding: 20px 48px;">
+        🎬 &nbsp; Accéder au catalogue complet
+    </a>
+</section>

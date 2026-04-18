@@ -1,0 +1,115 @@
+@model AppMovie.Models.Movie
+@{
+    ViewData["Title"] = "Modifier — " + Model.Title;
+    var genres = ViewBag.Genres as List<string> ?? new List<string>();
+}
+
+<div class="form-page">
+    <div class="form-container">
+        <div class="form-header">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <a asp-action="Details" asp-route-id="@Model.Id" style="color:var(--text-muted);text-decoration:none;font-size:0.85rem;">← Retour aux détails</a>
+            </div>
+            <h1 class="form-page-title">MODIFIER LE FILM</h1>
+            <p class="form-page-subtitle" style="color:var(--accent-red)">@Model.Title</p>
+        </div>
+
+        <div class="form-card">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CreatedAt" />
+                <div asp-validation-summary="ModelOnly" style="color:#ff4757;margin-bottom:20px;"></div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="Title">Titre *</label>
+                    <input asp-for="Title" class="form-control-custom" />
+                    <span asp-validation-for="Title" class="validation-msg">⚠</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Genre">Genre</label>
+                        <select asp-for="Genre" class="form-control-custom" style="appearance:auto">
+                            <option value="">-- Choisir --</option>
+                            @foreach (var g in genres)
+                            {
+                                <option value="@g" selected="@(g == Model.Genre)">@g</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="ReleaseDate">Date de sortie</label>
+                        <input asp-for="ReleaseDate" type="date" class="form-control-custom" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Price">Prix (€)</label>
+                        <input asp-for="Price" type="number" step="0.01" class="form-control-custom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Rating">Note (0-10)</label>
+                        <input asp-for="Rating" type="number" step="0.1" min="0" max="10" class="form-control-custom" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Director">Réalisateur</label>
+                        <input asp-for="Director" class="form-control-custom" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Duration">Durée (min)</label>
+                        <input asp-for="Duration" type="number" class="form-control-custom" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="Cast">Casting</label>
+                    <input asp-for="Cast" class="form-control-custom" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="Language">Langue</label>
+                    <input asp-for="Language" class="form-control-custom" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="Description">Synopsis</label>
+                    <textarea asp-for="Description" class="form-control-custom" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Affiche actuelle</label>
+                    @if (!string.IsNullOrEmpty(Model.PosterUrl))
+                    {
+                        <div style="margin-bottom:16px;">
+                            <img src="@Model.PosterUrl" alt="Affiche actuelle" style="width:100px;border-radius:8px;border:1px solid var(--border-subtle);" />
+                        </div>
+                    }
+                    <input asp-for="PosterUrl" id="PosterUrl" class="form-control-custom" style="margin-bottom:12px;" />
+                    <label style="background:var(--bg-deep);border:1px solid var(--border-subtle);border-radius:8px;padding:10px 20px;cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
+                        📁 Nouvelle image
+                        <input type="file" id="posterFile" name="posterFile" accept="image/*" style="display:none;" />
+                    </label>
+                    <img class="poster-preview" alt="Aperçu" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="TrailerUrl">URL Bande-annonce</label>
+                    <input asp-for="TrailerUrl" class="form-control-custom" />
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-form-submit">💾 Enregistrer les modifications</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn-form-cancel">← Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

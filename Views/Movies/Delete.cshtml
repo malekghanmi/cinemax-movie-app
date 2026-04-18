@@ -1,0 +1,28 @@
+@model AppMovie.Models.Movie
+@{
+    ViewData["Title"] = "Supprimer — " + Model.Title;
+}
+
+<div class="delete-page">
+    <div class="delete-card">
+        <div class="delete-icon">🗑️</div>
+        <h2 class="delete-title">SUPPRIMER</h2>
+        <p class="delete-msg">Voulez-vous vraiment supprimer le film :</p>
+        <p class="delete-movie-name">« @Model.Title »</p>
+
+        @if (!string.IsNullOrEmpty(Model.PosterUrl))
+        {
+            <img src="@Model.PosterUrl" alt="@Model.Title" style="width:100px;border-radius:10px;margin:0 auto 24px;display:block;border:1px solid var(--border-subtle);" />
+        }
+
+        <p style="color:var(--text-muted);font-size:0.8rem;margin-bottom:32px;">Cette action est irréversible.</p>
+
+        <div class="delete-actions">
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn-danger">Oui, supprimer</button>
+            </form>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn-form-cancel">Annuler</a>
+        </div>
+    </div>
+</div>
